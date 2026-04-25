@@ -1,0 +1,566 @@
+/* ========================================
+   GUARDIÕES DA FLORESTA - Estilos
+   ======================================== */
+
+/* Reset & Base */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color-bg: #0a1a0f;
+    --color-primary: #2ecc71;
+    --color-primary-dark: #1a8a4a;
+    --color-accent: #f39c12;
+    --color-danger: #e74c3c;
+    --color-text: #ecf0f1;
+    --color-text-dim: #95a5a6;
+    --color-overlay: rgba(5, 15, 8, 0.92);
+    --color-card: rgba(20, 50, 30, 0.85);
+    --color-glow: rgba(46, 204, 113, 0.3);
+    --font-main: 'Outfit', sans-serif;
+    --border-radius: 12px;
+    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    font-family: var(--font-main);
+    background: var(--color-bg);
+    color: var(--color-text);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+/* ========================================
+   Game Wrapper & Canvas
+   ======================================== */
+#game-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #0a1a0f;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+/* ========================================
+   HUD (Heads-Up Display)
+   ======================================== */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px 24px;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+#hud.visible {
+    opacity: 1;
+}
+
+#hud-left, #hud-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Health Bar */
+#health-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+#health-icon {
+    font-size: 18px;
+    filter: drop-shadow(0 0 4px rgba(231, 76, 60, 0.6));
+}
+
+#health-bar-bg {
+    width: 140px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 7px;
+    overflow: hidden;
+    position: relative;
+}
+
+#health-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #e74c3c, #2ecc71);
+    border-radius: 7px;
+    transition: width 0.4s ease;
+    position: relative;
+}
+
+#health-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+    border-radius: 7px 7px 0 0;
+}
+
+/* Score */
+#score-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+#score-icon {
+    font-size: 18px;
+}
+
+#score-value {
+    color: var(--color-accent);
+    min-width: 30px;
+    text-align: right;
+}
+
+/* Distance */
+#distance-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#distance-label {
+    color: var(--color-text-dim);
+}
+
+#distance-bar-bg {
+    width: 100px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#distance-bar-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    border-radius: 5px;
+    transition: width 0.5s ease;
+}
+
+#distance-icon {
+    font-size: 18px;
+}
+
+/* ========================================
+   Overlay Screens
+   ======================================== */
+.overlay-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    background: var(--color-overlay);
+    animation: fadeIn 0.5s ease;
+}
+
+.overlay-screen.hidden {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ========================================
+   Menu Screen
+   ======================================== */
+.menu-content {
+    text-align: center;
+    max-width: 500px;
+    padding: 40px;
+}
+
+.title-container {
+    margin-bottom: 40px;
+}
+
+.game-title {
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #fff;
+    text-shadow: 
+        0 0 20px rgba(46, 204, 113, 0.5),
+        0 0 60px rgba(46, 204, 113, 0.2),
+        0 4px 8px rgba(0, 0, 0, 0.5);
+    animation: titlePulse 3s ease-in-out infinite;
+}
+
+.title-accent {
+    color: var(--color-primary);
+    font-size: 3.5rem;
+    display: block;
+    background: linear-gradient(135deg, #2ecc71, #27ae60, #f39c12);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@keyframes titlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.game-subtitle {
+    font-size: 1.2rem;
+    color: var(--color-text-dim);
+    margin-top: 12px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+/* Buttons */
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 30px;
+}
+
+.menu-btn {
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 16px 36px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.menu-btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(46, 204, 113, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(46, 204, 113, 0.6);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-text);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+}
+
+.menu-footer p {
+    color: var(--color-text-dim);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+/* ========================================
+   Instructions Screen
+   ======================================== */
+.instructions-content {
+    text-align: center;
+    max-width: 500px;
+    padding: 40px;
+    background: var(--color-card);
+    border-radius: 20px;
+    border: 1px solid rgba(46, 204, 113, 0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+.instructions-content h2 {
+    font-size: 2rem;
+    margin-bottom: 24px;
+    color: var(--color-primary);
+    text-shadow: 0 0 20px var(--color-glow);
+}
+
+.instructions-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.instruction-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 16px 20px;
+    border-radius: var(--border-radius);
+    min-width: 120px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.instruction-item p {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: var(--color-text-dim);
+}
+
+.key-group {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+
+kbd {
+    display: inline-block;
+    background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: var(--font-main);
+    font-weight: 700;
+    font-size: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    min-width: 32px;
+    text-align: center;
+}
+
+.instructions-objectives {
+    text-align: left;
+    margin: 20px 0;
+    padding: 16px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--color-primary);
+}
+
+.instructions-objectives h3 {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: var(--color-accent);
+}
+
+.instructions-objectives ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.instructions-objectives li {
+    font-size: 0.95rem;
+    color: var(--color-text-dim);
+}
+
+/* ========================================
+   Game Over & Victory Screens
+   ======================================== */
+.gameover-content, .victory-content, .pause-content {
+    text-align: center;
+    max-width: 450px;
+    padding: 40px;
+    background: var(--color-card);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.gameover-title {
+    font-size: 2.5rem;
+    color: var(--color-danger);
+    text-shadow: 0 0 20px rgba(231, 76, 60, 0.4);
+}
+
+.gameover-message {
+    color: var(--color-text-dim);
+    font-size: 1.05rem;
+}
+
+.victory-title {
+    font-size: 2.5rem;
+    color: var(--color-accent);
+    text-shadow: 0 0 30px rgba(243, 156, 18, 0.4);
+    animation: titlePulse 2s ease-in-out infinite;
+}
+
+.victory-message {
+    color: var(--color-text-dim);
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.gameover-stats, .victory-stats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 14px 20px;
+    border-radius: var(--border-radius);
+    min-width: 90px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-item.highlight {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 15px rgba(243, 156, 18, 0.2);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--color-text-dim);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--color-accent);
+}
+
+.pause-content h2 {
+    font-size: 2rem;
+    color: var(--color-text);
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 2.5rem;
+    }
+    .title-accent {
+        font-size: 2.2rem;
+    }
+    #hud {
+        padding: 10px 14px;
+    }
+    #health-bar-bg {
+        width: 100px;
+    }
+    #distance-bar-bg {
+        width: 70px;
+    }
+    .instructions-grid {
+        gap: 10px;
+    }
+    .instruction-item {
+        min-width: 100px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-title {
+        font-size: 2rem;
+    }
+    .title-accent {
+        font-size: 1.7rem;
+    }
+    .menu-btn {
+        padding: 14px 24px;
+        font-size: 1rem;
+    }
+    .gameover-content, .victory-content {
+        padding: 24px;
+    }
+}
