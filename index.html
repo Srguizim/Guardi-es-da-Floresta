@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Guardiões da Floresta - Um jogo de plataforma onde você controla um guerreiro indígena protegendo a floresta.">
+    <title>Guardiões da Floresta</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="game-wrapper">
+        <!-- Canvas do Jogo -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- HUD -->
+        <div id="hud">
+            <div id="hud-left">
+                <div id="health-bar-container">
+                    <span id="health-icon">❤️</span>
+                    <div id="health-bar-bg">
+                        <div id="health-bar-fill"></div>
+                    </div>
+                </div>
+                <div id="score-display">
+                    <span id="score-icon">🌿</span>
+                    <span id="score-value">0</span>
+                </div>
+            </div>
+            <div id="hud-right">
+                <div id="distance-display">
+                    <span id="distance-label">Aldeia:</span>
+                    <div id="distance-bar-bg">
+                        <div id="distance-bar-fill"></div>
+                    </div>
+                    <span id="distance-icon">🏘️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela Inicial -->
+        <div id="menu-screen" class="overlay-screen">
+            <div class="menu-content">
+                <div class="title-container">
+                    <h1 class="game-title">Guardiões<br><span class="title-accent">da Floresta</span></h1>
+                    <p class="game-subtitle">Uma jornada pela preservação</p>
+                </div>
+                <div class="menu-buttons">
+                    <button id="btn-play" class="menu-btn btn-primary" onclick="startGame()">
+                        <span class="btn-icon">▶</span> Jogar
+                    </button>
+                    <button id="btn-instructions" class="menu-btn btn-secondary" onclick="showInstructions()">
+                        <span class="btn-icon">📖</span> Como Jogar
+                    </button>
+                </div>
+                <div class="menu-footer">
+                    <p>🌱 Proteja a floresta. Salve sua aldeia.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Instruções -->
+        <div id="instructions-screen" class="overlay-screen hidden">
+            <div class="instructions-content">
+                <h2>Como Jogar</h2>
+                <div class="instructions-grid">
+                    <div class="instruction-item">
+                        <div class="key-group">
+                            <kbd>←</kbd><kbd>→</kbd>
+                        </div>
+                        <p>Mover</p>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="key-group">
+                            <kbd>↑</kbd> / <kbd>Espaço</kbd>
+                        </div>
+                        <p>Pular</p>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="key-group">
+                            <kbd>X</kbd>
+                        </div>
+                        <p>Atacar</p>
+                    </div>
+                </div>
+                <div class="instructions-objectives">
+                    <h3>🎯 Objetivos</h3>
+                    <ul>
+                        <li>🍎 Colete frutas e ervas medicinais</li>
+                        <li>💧 Encontre fontes de água</li>
+                        <li>🐆 Desvie ou enfrente animais selvagens</li>
+                        <li>🪓 Evite áreas de desmatamento</li>
+                        <li>🏘️ Chegue à aldeia segura!</li>
+                    </ul>
+                </div>
+                <button class="menu-btn btn-secondary" onclick="hideInstructions()">
+                    <span class="btn-icon">↩</span> Voltar
+                </button>
+            </div>
+        </div>
+
+        <!-- Tela de Game Over -->
+        <div id="gameover-screen" class="overlay-screen hidden">
+            <div class="gameover-content">
+                <h2 class="gameover-title">💀 Fim da Jornada</h2>
+                <p class="gameover-message" id="gameover-message">A floresta precisa de você! Tente novamente.</p>
+                <div class="gameover-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Recursos</span>
+                        <span class="stat-value" id="final-score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Distância</span>
+                        <span class="stat-value" id="final-distance">0%</span>
+                    </div>
+                </div>
+                <button class="menu-btn btn-primary" onclick="restartGame()">
+                    <span class="btn-icon">🔄</span> Tentar Novamente
+                </button>
+                <button class="menu-btn btn-secondary" onclick="goToMenu()">
+                    <span class="btn-icon">🏠</span> Menu
+                </button>
+            </div>
+        </div>
+
+        <!-- Tela de Vitória -->
+        <div id="victory-screen" class="overlay-screen hidden">
+            <div class="victory-content">
+                <h2 class="victory-title">🎉 Vitória!</h2>
+                <p class="victory-message">Você chegou à aldeia e compartilhou os recursos com seu povo!</p>
+                <div class="victory-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">🍎 Frutas</span>
+                        <span class="stat-value" id="victory-fruits">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">🌿 Ervas</span>
+                        <span class="stat-value" id="victory-herbs">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">💧 Água</span>
+                        <span class="stat-value" id="victory-water">0</span>
+                    </div>
+                    <div class="stat-item highlight">
+                        <span class="stat-label">⭐ Total</span>
+                        <span class="stat-value" id="victory-total">0</span>
+                    </div>
+                </div>
+                <button class="menu-btn btn-primary" onclick="restartGame()">
+                    <span class="btn-icon">🔄</span> Jogar Novamente
+                </button>
+                <button class="menu-btn btn-secondary" onclick="goToMenu()">
+                    <span class="btn-icon">🏠</span> Menu
+                </button>
+            </div>
+        </div>
+
+        <!-- Tela de Pausa -->
+        <div id="pause-screen" class="overlay-screen hidden">
+            <div class="pause-content">
+                <h2>⏸️ Pausado</h2>
+                <button class="menu-btn btn-primary" onclick="resumeGame()">
+                    <span class="btn-icon">▶</span> Continuar
+                </button>
+                <button class="menu-btn btn-secondary" onclick="goToMenu()">
+                    <span class="btn-icon">🏠</span> Menu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
